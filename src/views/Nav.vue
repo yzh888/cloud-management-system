@@ -72,7 +72,9 @@ export default {
 	    return {
 	         sideDisplay: false,
 			 active:false,
-			 systemSubmenuDisplay:false
+			 systemSubmenuDisplay:false,
+			 role: '',
+			 permission: ''
 	    }
 	  },
 	  created () {

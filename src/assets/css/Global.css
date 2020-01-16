@@ -62,6 +62,10 @@ a {
 
 /* 横向对齐布局 */
 
+.cd-df {
+	display: flex;
+}
+
 /* 横向左对齐,纵向上对齐 */
 .cd-df-start {
 	display: flex;
