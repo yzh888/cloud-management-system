@@ -15,30 +15,33 @@
 			  <button class="pm-search-btn cd-font-white-color cd-bg-blue-color" @click="zhezhaoVisible = true">新增</button>
 		</div>
 		<div class="pm-content">
-			<div class="pm-permission" v-for="(item, index) in menuPermission" :key="index">
-				<div class="cd-df-bt cd-mar-top" v-if="">
-					<p class="col-6">
-							<i class="iconfont" v-if="item.childList.length!=0">&#xe652;</i>
-					{{item.name}}</p>
-					<p class="pm-operation col-6">
-						<span>添加子菜单</span>
-						<span>编辑</span>
-						<span @click="del_permission(item.id)">删除</span>
-					</p>
-				</div>
-				<div class="cd-df-bt cd-mar-top pm-permission-child" v-for="(item1, index) in item.childList" :key="index"  v-if="">
-					<p class="col-6"><i class="iconfont" v-if="false">&#xe652;</i> {{item1.name}}</p>
-					<p class="pm-operation col-6">
-						<span>添加子菜单</span>
-						<span>编辑</span>
-						<span @click="del_permission(item1.id)">删除</span>
-					</p>
-				</div>
+			<div class="pm-form">
+			<p class="cd-df-bt pm-title-padding">
+				<span class="form-position">权限名称</span>
+				<span>操作</span>
+			</p>
 			</div>
-		</div>
-        <div class="zhezhao1" v-if="zhezhaoVisible">
+		<div class="block">
+					    <el-tree
+					      :data="data"
+					      node-key="id"
+						   :props="defaultProps"
+					      default-expand-all
+					      :expand-on-click-node="false">
+					      <span  class="custom-tree-node pm-el-childMenu" slot-scope="{ node, data }">
+					        <span>{{ node.label }}</span>
+					        <span class="el-tree-span">
+								<span @click="post_childMenu(data.id)">添加子菜单</span><!-- post_childMenu(data.id) -->
+								<span @click="post_childrenMenu(data)">编辑</span>
+								<span @click="del_permission(data.id)">删除</span>
+					        </span>
+					      </span>
+					    </el-tree>
+					  </div>
 			
 		</div>
+        
+		
 		<div class="zhezhao" v-if="zhezhaoVisible">
 			<p class="pm-add-top cd-df-bt">
 				<span></span>
@@ -84,7 +87,7 @@
 				<span></span>
 				<span>
 					<button class="pm-add-btn cd-mar-right" @click="zhezhaoVisible = false">取消</button>
-					<button class="pm-add-btn cd-font-white-color cd-bg-blue-color" @click="post_permission">提交</button>
+					<button class="pm-add-btn cd-font-white-color cd-bg-blue-color" @click="addpermission()">提交</button>
 				</span>
 			</p>
 		</div>
@@ -116,6 +119,7 @@
 						        label: '目录权限'
 						      }],
 				        value: '',
+						zhezhaoVisible1: false,
 						zhezhaoVisible: false,
 						permissionName: '',
 						permissionSort: '',
@@ -128,19 +132,26 @@
 						parentId: '',
 						radio: '1',
 						menuPermission: [],
-						active: false
+						active: false,
+						permissionMenu:false,
+						data : '',
+										 defaultProps: {
+										          children: 'childList',
+										          label: 'name'
+										        }
+						
 			}
 		},
-		
 		created() {
 			this.get_permission()
 		},
 		
 		methods: {
+			// 新增权限
 			post_permission(){
 				this.axios({
 					method: 'post',
-					url: this.GLOBAL.baseUrl + '/pm/post', //后端api
+					url: this.GLOBAL.baseUrl + '/p/pm', //后端api
 					data: {
 						"parentId": this.parentId,
 						"name": this.permissionName,
@@ -158,28 +169,81 @@
 					          type: 'success',
 							  duration: '1000'
 					        });
+							this.zhezhaoVisible = false;
 					document.getElementById('pmAdd').value='';
 					this.get_permission()
 				});
 			},
-			
+			//树形控件
+			 handleNodeClick(data) {
+			        console.log(data);
+			      },
+			//删除指定权限
 			del_permission(id){
 				this.axios({
 					method: 'delete',
-					url: this.GLOBAL.baseUrl + '/pm/d/' + id
+					url: this.GLOBAL.baseUrl + '/d/pm/' + id
 				}).then(res=>{
 					this.get_permission()
 				})
 			},
-			
-		    get_permission(){
+			//树形底层展开
+			pmMenu(index){
+							this.flags.splice(index,1,!this.flags[index])
+							console.log(JSON.stringify(this.flags))
+						},
+			//查询全部菜单权限
+		   get_permission(){
+		   				this.axios({
+		   					method: 'get',
+		   					url: this.GLOBAL.baseUrl,
+		   				}).then(res=>{
+		   					console.log(res.data.data)
+		   					this.data = res.data.data
+		   					//给flags数组初始化
+		   				})
+		   			},
+			addpermission(){
+						this.post_permission()
+					},
+		   	// 添加子类菜单
+			post_childMenu(id){
+				this.zhezhaoVisible = true;
+				this.parentId = id;
+			},
+			//修改子类菜单
+			post_childrenMenu(data){
+				this.zhezhaoVisible1 = true;
+				this.parentId=data.id;
+				this.permissionName=data.name;
+				this.permissionType=data.type;
+				this.permissionRouterUrl=data.routerUrl;
+				this.permissionStatus=data.status;
+				
 				this.axios({
-					method: 'get',
-					url: this.GLOBAL.baseUrl + '/pm',
-				}).then(res=>{
-					console.log(res.data.data)
-					this.menuPermission = res.data.data;
-				})
+					method: 'post',
+					url: this.GLOBAL.baseUrl + '/u/pm', //后端api
+					data: {
+						"parentId": this.parentId,
+						"name": this.permissionName,
+						"icon": this.permissionIcon,
+						"permissionCode": this.permissionCode,
+						"routerUrl": this.permissionRouterUrl,
+						"sort": this.permissionSort,
+						"status": this.permissionStatus,
+						"type": this.permissionType
+						
+					}
+				}).then(res => {
+					this.$message({
+					          message: '修改成功',
+					          type: 'success',
+							  duration: '1000'
+					        });
+							this.zhezhaoVisible1 = false;
+					document.getElementById('pmAdd').value='';
+					this.get_permission()
+				});
 			},
 			
 			load_child_menu(){
@@ -198,8 +262,13 @@
 	.pm-search {
 		margin-top: 20px;
 		padding: 0 20px;
+		height: 60px;
+		border-bottom:1.5px solid rgb(231, 234, 239) ;
 	}
-	
+	.pm-form{
+		padding: 20px;
+		border-bottom:1.5px solid rgb(231, 234, 239) ;
+	}
 	.pm-search-input {
 		min-width: 200px;
 		height: 40px;
@@ -208,7 +277,44 @@
 		padding: 0 10px;
 		border-radius: 5px;
 	}
+	.pm-title-padding{
+		padding: 0 70px;
+	}
 	
+	.pm-el-childMenu {
+		display: inline-block;
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+	}
+	
+	.el-tree-span {
+			padding-right: 40px;
+		}
+		
+		.el-tree-span span {
+			margin-right: 10px;
+		}
+	
+	    .el-tree {
+			font-size: 16px;
+			width: 100%;
+			margin: 20px 10px;
+		}
+	
+	.pm-content {
+		margin-top: 20px;
+		padding: 0 20px;
+	}
+	.form-position{
+		margin-left: -65px;
+	}
+	.pm-change {
+		transition: all 0.2s;
+	}
+	.braketsChange {
+	    transform: rotate(90deg);
+	}
 	.zhezhao1 {
 		position: absolute;
 		left: 0;
@@ -284,4 +390,10 @@
 		border-radius: 5px;
 		border: 1px solid #d3d6db;
 	}
+	
+	.el-tree-node{
+		font-size: 26px;
+	}
+ 
+ 
 </style>
