@@ -25,7 +25,11 @@
 								    <el-dropdown-item v-model="permission" @click.native="al(1)">
 										<router-link to="permission"><i class="iconfont">&#xe85f;</i>权限管理
 										</router-link>
-										</el-dropdown-item>
+									</el-dropdown-item>
+									<el-dropdown-item v-model="user" @click.native="al(2)">
+										<router-link to="user"><i class="iconfont">&#xe620;</i>用户管理
+										</router-link>
+									</el-dropdown-item>
 								  </el-dropdown-menu>
 								</el-dropdown>
 					</span>
@@ -52,6 +56,7 @@
 						<div class="cd-col-center" v-if="systemSubmenuDisplay">
 							<span class="cd-mar-top"><router-link to="role">角色管理</router-link></span>
 							<span class="cd-mar-top"><router-link to="permission">权限管理</router-link></span>
+							<span class="cd-mar-top"><router-link to="user">用户管理</router-link></span>
 						</div>
 					</div>
 					
@@ -70,6 +75,7 @@
 export default {
 	  data () {
 	    return {
+			 user:'',
 	         sideDisplay: false,
 			 active:false,
 			 systemSubmenuDisplay:false,
@@ -177,6 +183,6 @@ export default {
 	  }
 	  
 	  .el-dropdown-menu {
-		 height: 100px;
+		 height: 130px;
 	  }
 </style>

@@ -32,32 +32,11 @@
 						</el-form-item>
 					</el-form>
 					<div slot="footer" class="dialog-footer">
-						<el-button @click="dialogFormVisible = false">取 消</el-button>
+						<el-button @click="permissionManage = false">取 消</el-button>
 						<el-button type="primary" @click="post_role()">确 定</el-button>
 					</div>
 				</el-dialog>
 
-				<el-dialog title="权限管理" :visible.sync="permissionManage">
-					<el-form :model="form">
-						<el-input placeholder="请输入关键字搜索" v-model="filterText" class="search-length" clearable>
-						</el-input>
-						<el-button type="primary" class="checkbox-position" @click="get_dim_role()">搜 索</el-button>
-					</el-form>
-					<el-tree :data="data"
-					show-checkbox
-					 default-expand-all 
-					 :filter-node-method=filterNode node-key="id" 
-					 @check-change="getNodeData"
-					ref="tree" highlight-current 
-					:props="defaultProps
-					">
-				  </el-tree>
-				  <div slot="footer" class="dialog-footer">
-				     <el-button @click="dialogFormVisible = false">取 消</el-button>
-				     <el-button type="primary" @click="permissionAllot()">确 定</el-button>
-				   </div>
-			</el-dialog>
-			
 			<el-dialog title="权限详情" :visible.sync="dialogTableVisible1">
 			  <el-table :data="gridData">
 			    <el-table-column property="role_id" label="角色" width="350"></el-table-column>
@@ -71,6 +50,29 @@
 			</el-tooltip>
 
 		</div>
+		
+		<!-- 分配权限 -->
+		<el-dialog title="权限管理" :visible.sync="permissionManage">
+				<el-form :model="form">
+					<el-input placeholder="请输入关键字搜索" v-model="filterText" class="search-length" clearable>
+					</el-input>
+					<el-button type="primary" class="checkbox-position" @click="get_dim_role()">搜 索</el-button>
+				</el-form>
+				<el-tree :data="data"
+				show-checkbox
+				 default-expand-all 
+				 :filter-node-method=filterNode node-key="id" 
+				 @check-change="getNodeData"
+				ref="tree" highlight-current 
+				:props="defaultProps
+				">
+			  </el-tree>
+			  <div slot="footer" class="dialog-footer">
+			     <el-button @click="dialogFormVisible = false">取 消</el-button>
+			     <el-button type="primary" @click="post_rolePermission()">确 定</el-button>
+			   </div>
+		</el-dialog>
+		
 		<div class="cd-col-start">
 			<ul class="cd-df-center checkbox-position">
 				<li>名称</li>
@@ -79,6 +81,7 @@
 				<li>操作</li>
 			</ul>
 		</div>
+		
 		<div v-for="(item,index) in roles" :key="index">
 			<ul class="cd-df-center">
 				<el-checkbox v-model="checked" :label="item.id" class="checkbox-position-lg"></el-checkbox>
@@ -89,10 +92,11 @@
 					<span class=" cd-bg-blue-color cd-boder-circle re-click" @click="dialogFormVisible = true"><i class="iconfont">&#xe76c;</i></span>
 					<span class="cd-bg-red-color cd-boder-circle re-click"><i class="iconfont " @click="delete_role_single(item.id)">&#xe601;</i></span>
 					<span class=" cd-bg-orange-color cd-boder-circle re-click" @click="get_rolePermission(item.id)"><i class="iconfont">&#xe678;</i></span>
-					<span class="cd-boder-circle re-click" @click="permissionManage = true"><i class="iconfont">&#xe609;</i></span>
+					<span class="cd-boder-circle re-click" @click="open_rolePermission_management(item.id)"><i class="iconfont">&#xe609;</i></span>
 				</li>
 			</ul>
 		</div>
+		
 	</div>
 	</div>
 </template>
@@ -103,7 +107,7 @@
 		data() {
 			return {
 				gridData: '',
-						dialogTableVisible1: false,
+			    dialogTableVisible1: false,
 				checked: [],
 				dialogFormVisible: false,
 				permissionManage: false,
@@ -120,14 +124,14 @@
 					desc: ''
 				},
 				filterText: '',
-				data: '',
+				data: [],
 				defaultProps: {
 					children: 'childList',
 					label: 'name'
 				},
 
 				formLabelWidth: '100px',
-				p: 0
+				roleId: ''
 			};
 		},
 		created() {
@@ -141,15 +145,12 @@
 		},
 		methods: {
             getNodeData(){
-				      let res = this.$refs.tree.getCheckedNodes()
-					  let len = res.length
-				      res.forEach((item) => {
-						  for(this.p;this.p<6; this.p++){
-						  // this.permission.splice(i,1,item.id)
-						 
-						  }
-				      })
-				    },
+				let arr = this.$refs.tree.getCheckedNodes()
+				for(var i=0;i<this.$refs.tree.getCheckedNodes().length;i++){
+					  this.permission.splice(i,1,arr[i].id)
+					}
+				},
+				     
 			get_permission() {
 				this.axios({
 					method: 'get',
@@ -169,7 +170,10 @@
 						}
 					})
 					.then(res => {
-						this.roles = res.data.data
+						for(var i = 0; i < res.data.data.length; i++){
+							this.roles.splice(i,1,res.data.data[i])
+						}
+						
 					})
 					.catch(function(error) {
 						console.log(error)
@@ -188,25 +192,37 @@
 				})
 			},
 			
-			permissionAllot(){
-				console.log(this.permission)
-				// this.axios({
-				// 		method: 'post',
-				// 		url: this.GLOBAL.baseUrl + '/p/rp/',
-				// 		data: {
-				// 			permissionId: data.id,
-				// 			roleId: data.id
-				// 		}
-				// 	})
-				// 	.then(res => {
-				// 		this.dialogFormVisible = false
-				// 	})
-				// 	.catch(function(error) {
-				// 		console.log(error)
-				// 	});
+			// 打开角色分配权限界面
+			open_rolePermission_management(id){
+				this.roleId = id;
+				this.permissionManage = true;
+			},
+			
+			// 分配角色权限
+			post_rolePermission(){
+				for(var i = 0; i < this.permission.length; i++){
+				this.axios({
+						method: 'post',
+						url: this.GLOBAL.baseUrl + '/p/rp/',
+						data: {
+							permissionId: this.permission[i],
+							roleId: this.roleId
+						}
+					})
+					.then(res => {
+						this.permissionManage = false
+						this.$message({
+							message: '分配成功',
+							type: 'success',
+							duration: '1000'
+						});
+					})
+					}
 			},
 			
 			post_role() {
+				console.log(this.form.sign)
+				console.log(this.form.name)
 				this.axios({
 						method: 'post',
 						url: this.GLOBAL.baseUrl + '/p/re',
@@ -221,7 +237,7 @@
 							type: 'success',
 							duration: '1000'
 						});
-						this.get_role()
+						// this.get_role()
 						this.dialogFormVisible = false
 					})
 					.catch(function(error) {
@@ -265,6 +281,7 @@
 					});
 				});
 			},
+			
 			delete_role_single(id) {
 				this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
 					confirmButtonText: '确定',

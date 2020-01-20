@@ -1,12 +1,12 @@
 /* 全局iconfont */
 @font-face {
   font-family: 'iconfont';  /* project id 1614523 */
-  src: url('//at.alicdn.com/t/font_1614523_v7nduvrsolj.eot');
-  src: url('//at.alicdn.com/t/font_1614523_v7nduvrsolj.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_1614523_v7nduvrsolj.woff2') format('woff2'),
-  url('//at.alicdn.com/t/font_1614523_v7nduvrsolj.woff') format('woff'),
-  url('//at.alicdn.com/t/font_1614523_v7nduvrsolj.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_1614523_v7nduvrsolj.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.eot');
+  src: url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.svg#iconfont') format('svg');
 }
 
 .iconfont{
@@ -90,6 +90,12 @@ a {
 .cd-df-bt {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
+}
+
+.cd-df-au {
+	display: flex;
+	justify-content: space-around;
 	align-items: center;
 }
 
@@ -179,12 +185,20 @@ a {
 	margin-top: 10px;
 }
 
+.cd-mar-sm-top {
+	margin-top: 5px;
+}
+
 .cd-mar-right {
 	margin-right: 10px;
 }
 
 .cd-mar-sm-right {
 	margin-right: 5px;
+}
+
+.cd-mar-left {
+	margin-left: 10px;
 }
 
 /* 背景 */
@@ -201,7 +215,12 @@ a {
 
 /* 橙色背景 */
 .cd-bg-orange-color {
-	background-color: rgb(230, 162, 60);
+	background-color: rgb(255, 186, 0);
+}
+
+/* 绿色背景 */
+.cd-bg-green-color {
+	background-color: rgb(19, 206, 102);
 }
 
 /* 字体颜色 */

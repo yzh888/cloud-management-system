@@ -12,7 +12,7 @@
 			  </el-select>
 			  <button class="pm-search-btn cd-font-white-color cd-bg-blue-color">刷新</button>
 			  <button class="pm-search-btn cd-font-white-color cd-bg-blue-color">查询</button>
-			  <button class="pm-search-btn cd-font-white-color cd-bg-blue-color" @click="zhezhaoVisible = true">新增</button>
+			  <button class="pm-search-btn cd-font-white-color cd-bg-blue-color" @click="addpermission">新增</button>
 		</div>
 		<div class="pm-content">
 			<div class="pm-form">
@@ -32,7 +32,7 @@
 					        <span>{{ node.label }}</span>
 					        <span class="el-tree-span">
 								<span @click="post_childMenu(data.id)">添加子菜单</span><!-- post_childMenu(data.id) -->
-								<span @click="post_childrenMenu(data)">编辑</span>
+								<span @click="updata_permission(data)">编辑</span>
 								<span @click="del_permission(data.id)">删除</span>
 					        </span>
 					      </span>
@@ -50,7 +50,6 @@
 				</span>
 			</p>
 			<p class="pm-add-mar-top cd-df-bt">
-				<span>父ID: <input v-model="parentId" type="text" class="pm-search-input" placeholder="顶级" id="pmAdd"></span>
 				<span>类型
 				 <el-select v-model="permissionType" placeholder="请选择">
 				    <el-option
@@ -61,6 +60,7 @@
 				    </el-option>
 				  </el-select>
 				</span>
+				<span>父ID: <input v-model="parentId" type="text" class="pm-search-input" placeholder="顶级" id="pmAdd"></span>
 			</p>
 			<p  class="pm-add-mar-top">权限名</p>
 			<p><input class="pm-add-input" v-model="permissionName" type="text" id="pmAdd"></p>
@@ -81,13 +81,12 @@
 				<p>
 					<input v-model="permissionIcon" type="text" class="pm-add-input" placeholder="权限图标" id="pmAdd">
 					</p>
-			<p  class="pm-add-mar-top">排序</p>
 			<p><input class="pm-add-input"  v-model="permissionSort" type="text" id="pmAdd"></p>
 			<p class="cd-df-bt pm-add-bottom">
 				<span></span>
 				<span>
 					<button class="pm-add-btn cd-mar-right" @click="zhezhaoVisible = false">取消</button>
-					<button class="pm-add-btn cd-font-white-color cd-bg-blue-color" @click="addpermission()">提交</button>
+					<button class="pm-add-btn cd-font-white-color cd-bg-blue-color" @click="post_permission()">提交</button>
 				</span>
 			</p>
 		</div>
@@ -122,7 +121,6 @@
 						zhezhaoVisible1: false,
 						zhezhaoVisible: false,
 						permissionName: '',
-						permissionSort: '',
 						permissionStatus: '',
 						permissionTitle: '',
 						permissionIcon: '',
@@ -133,6 +131,7 @@
 						radio: '1',
 						menuPermission: [],
 						active: false,
+						permissionJudge: '',
 						permissionMenu:false,
 						data : '',
 										 defaultProps: {
@@ -149,6 +148,32 @@
 		methods: {
 			// 新增权限
 			post_permission(){
+				if(this.permissionJudge == 1){
+					this.axios({
+						method: 'put',
+						url: this.GLOBAL.baseUrl + '/u/pm', //后端api
+						data: {
+							"parentId": this.parentId,
+							"name": this.permissionName,
+							"icon": this.permissionIcon,
+							"permissionCode": this.permissionCode,
+							"routerUrl": this.permissionRouterUrl,
+							"sort": this.permissionSort,
+							"status": this.permissionStatus,
+							"type": this.permissionType
+							
+						}
+					}).then(res => {
+						this.$message({
+						          message: '修改成功',
+						          type: 'success',
+								  duration: '1000'
+						        });
+								this.zhezhaoVisible1 = false;
+						document.getElementById('pmAdd').value='';
+						this.get_permission()
+					});
+				} else if(this.permissionJudge == 0){
 				this.axios({
 					method: 'post',
 					url: this.GLOBAL.baseUrl + '/p/pm', //后端api
@@ -158,7 +183,6 @@
 						"icon": this.permissionIcon,
 						"permissionCode": this.permissionCode,
 						"routerUrl": this.permissionRouterUrl,
-						"sort": this.permissionSort,
 						"status": this.permissionStatus,
 						"type": this.permissionType
 						
@@ -173,11 +197,8 @@
 					document.getElementById('pmAdd').value='';
 					this.get_permission()
 				});
+				}
 			},
-			//树形控件
-			 handleNodeClick(data) {
-			        console.log(data);
-			      },
 			//删除指定权限
 			del_permission(id){
 				this.axios({
@@ -190,7 +211,6 @@
 			//树形底层展开
 			pmMenu(index){
 							this.flags.splice(index,1,!this.flags[index])
-							console.log(JSON.stringify(this.flags))
 						},
 			//查询全部菜单权限
 		   get_permission(){
@@ -198,52 +218,34 @@
 		   					method: 'get',
 		   					url: this.GLOBAL.baseUrl,
 		   				}).then(res=>{
-		   					console.log(res.data.data)
 		   					this.data = res.data.data
-		   					//给flags数组初始化
+							for(var i = 0; i < res.data.data.length; i++){
+								this.data.splice(i,1,res.data.data[i])
+							}
 		   				})
 		   			},
 			addpermission(){
-						this.post_permission()
+				   this.zhezhaoVisible = true;
+				   this.permissionJudge = 0;
 					},
 		   	// 添加子类菜单
 			post_childMenu(id){
+				this.permissionJudge = 0;
 				this.zhezhaoVisible = true;
 				this.parentId = id;
 			},
-			//修改子类菜单
-			post_childrenMenu(data){
-				this.zhezhaoVisible1 = true;
+			//修改权限
+			updata_permission(data){
+				console.log(data)
+				this.permissionJudge = 1;
+				this.zhezhaoVisible = true;
 				this.parentId=data.id;
 				this.permissionName=data.name;
 				this.permissionType=data.type;
+				this.permissionCode = data.permission_code
 				this.permissionRouterUrl=data.routerUrl;
 				this.permissionStatus=data.status;
-				
-				this.axios({
-					method: 'post',
-					url: this.GLOBAL.baseUrl + '/u/pm', //后端api
-					data: {
-						"parentId": this.parentId,
-						"name": this.permissionName,
-						"icon": this.permissionIcon,
-						"permissionCode": this.permissionCode,
-						"routerUrl": this.permissionRouterUrl,
-						"sort": this.permissionSort,
-						"status": this.permissionStatus,
-						"type": this.permissionType
-						
-					}
-				}).then(res => {
-					this.$message({
-					          message: '修改成功',
-					          type: 'success',
-							  duration: '1000'
-					        });
-							this.zhezhaoVisible1 = false;
-					document.getElementById('pmAdd').value='';
-					this.get_permission()
-				});
+				this.permissionIcon = data.icon
 			},
 			
 			load_child_menu(){
