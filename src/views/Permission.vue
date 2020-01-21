@@ -86,7 +86,7 @@
 				<span></span>
 				<span>
 					<button class="pm-add-btn cd-mar-right" @click="zhezhaoVisible = false">取消</button>
-					<button class="pm-add-btn cd-font-white-color cd-bg-blue-color" @click="post_permission()">提交</button>
+					<button class="pm-add-btn cd-font-white-color cd-bg-blue-color" @click="post_permission()()">提交</button>
 				</span>
 			</p>
 		</div>
@@ -150,7 +150,7 @@
 			post_permission(){
 				if(this.permissionJudge == 1){
 					this.axios({
-						method: 'put',
+						method: 'post',
 						url: this.GLOBAL.baseUrl + '/u/pm', //后端api
 						data: {
 							"parentId": this.parentId,
@@ -161,7 +161,6 @@
 							"sort": this.permissionSort,
 							"status": this.permissionStatus,
 							"type": this.permissionType
-							
 						}
 					}).then(res => {
 						this.$message({

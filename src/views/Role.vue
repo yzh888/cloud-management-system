@@ -39,7 +39,7 @@
 
 			<el-dialog title="权限详情" :visible.sync="dialogTableVisible1">
 			  <el-table :data="gridData">
-			    <el-table-column property="role_id" label="角色" width="350"></el-table-column>
+			    <el-table-column property="role[0].name" label="角色" width="350"></el-table-column>
 			    <el-table-column property="permission[0].name" label="权限"></el-table-column>
 			  </el-table>
 			</el-dialog>
@@ -184,7 +184,7 @@
 				this.dialogTableVisible1 = true
 				this.axios({
 					method: 'get',
-					url: this.GLOBAL.baseUrl + '/g/rp/' + 2,
+					url: this.GLOBAL.baseUrl + '/g/rp/' + id,
 				}).then(res =>{
 					console.log(res.data.data)
 					this.gridData = res.data.data

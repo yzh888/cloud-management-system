@@ -3,21 +3,21 @@
 		<div class="us-search cd-df-start">
 			<input type="text" placeholder="输入角色名称搜索" class="us-search-input cd-mar-right">
 			<input type="text" placeholder="输入用户名称或账号搜索" class="us-search-input cd-mar-right">
-			<el-select v-model="value" placeholder="请选择" >
-			   <el-option
-			     v-for="item in options"
-			     :key="item.value"
-			     :label="item.label"
-			     :value="item.value">
-			   </el-option>
-			 </el-select>
+			<el-select v-model="value" placeholder="请选择">
+			    <el-option
+			      v-for="item in options"
+			      :key="item.value"
+			      :label="item.label"
+			      :value="item.value">
+			    </el-option>
+			  </el-select>
 			 <button class="us-search-btn cd-font-white-color cd-bg-green-color cd-mar-sm-top">刷新</button>
 			 <button class="us-search-btn cd-font-white-color cd-bg-orange-color cd-mar-sm-top">重置</button>
 		</div>
 		<div class="us-content">
 			
 			<div class="cd-df">
-				<div class="cd-col-2" >
+				<div class="" style="width: 10%;" >
 					<span class="us-change us-click" :class="{braketsChange:active}">
 						<i class="iconfont" @click="roleActive">&#xe652;</i>角色
 					</span>
@@ -27,52 +27,61 @@
 						<span>学生</span>
 					</div>
 				</div>
-				<div class="cd-col-10">
-					<!-- <el-button class="us-search-btn us-btn-add" @click="dialogFormVisible = true">
-						<i class="iconfont cd-font-white-color cd-sms-font">&#xe75e;</i>新增
-					</el-button> -->
-					<div>
-					<button class="us-search-btn cd-font-white-color cd-bg-blue-color cd-mar-sm-top us-add-position cd-mar-right" 
-					@click="dialogFormVisible = true">
+				<div class="" style="width: 90%;">
+					<div class="cd-df-left-start">
+					<button class="us-search-btn cd-font-white-color cd-bg-blue-color cd-mar-sm-top  cd-mar-right cd-cursor" 
+					@click="addUser()">
 						<i class="iconfont cd-font-white-color cd-sms-font cd-mar-sm-right">&#xe75e;</i>新增
 					</button>
-					<button class="us-search-btn cd-font-white-color cd-bg-orange-color cd-mar-sm-top us-add-position cd-mar-right"
+					<button class="us-search-btn cd-font-white-color cd-bg-green-color cd-mar-sm-top  cd-mar-right cd-cursor"
 					@click="dialogFormVisible = true">
-						<i class="iconfont cd-font-white-color cd-sms-font cd-mar-sm-right">&#xe75e;</i>修改
+						<i class="iconfont cd-font-white-color cd-sms-font cd-mar-sm-right">&#xe76c;</i>修改
 					</button>
-					<button class="us-search-btn cd-font-white-color cd-bg-red-color cd-mar-sm-top us-add-position "
+					<button class="us-search-btn cd-font-white-color cd-bg-red-color cd-mar-sm-top  cd-mar-right cd-cursor"
 					@click="dialogFormVisible = true">
-						<i class="iconfont cd-font-white-color cd-sms-font cd-mar-sm-right">&#xe75e;</i>删除
+						<i class="iconfont cd-font-white-color cd-sms-font cd-mar-sm-right">&#xe601;</i>删除
+					</button>
+					 <input type="file" name="fileBox" id="fileBox"  @change="inputFile($event)" multiple class="us-file cd-cursor">
+					<button class="us-search-btn cd-font-white-color cd-bg-orange-color cd-mar-sm-top cd-cursor" style="margin-left: -40px;"
+					>
+						<i class="iconfont cd-font-white-color cd-sms-font cd-mar-sm-right">&#xe889;</i>
+						<span>导入</span>
+						
 					</button>
 					</div>
-					<div class="cd-col-start">
-						<ul class="cd-df-center ">
-							<li>用户名</li>
-							<li>学号</li>
-							<li>性别</li>
-							<li>电话</li>
-							<li>邮箱</li>
-							<li>院系</li>
-							<li>状态</li>
-							<li>创建日期</li>
-							<li>操作</li>
+					<div class="cd-col-left-start us-title cd-mar-top">
+						<ul class="cd-df-left-start" style="text-align: left;">
+							<li class="cd-mar-left us-content-jobNumber2">用户名</li>
+							<li class="us-content-name1">学号</li>
+							<li class="us-content-jobNumber2">性别</li>
+							<li class="us-content-jobNumber2">角色</li>
+							<li class="us-content-name2" >电话</li>
+							<li class="us-content-faculty2 ">邮箱</li>
+							<li class="us-content-faculty2">院系</li>
+							<li class="us-content-jobNumber2">状态</li>
+							<li class="us-content-jobNumber2">操作</li>
 						</ul>
 					</div>
-					<div v-for="(item,index) in roles" :key="index">
-						<ul class="cd-df-center us-record-position" >
-							<el-checkbox v-model="checked" :label="item.id"></el-checkbox>
-							<li>{{item.name}}</li>
-							<li>{{item.code}}</li>
-							<li>男</li>
-							<li>110120</li>
-							<li>123@qq.com</li>
-							<li>计算机与软件</li>
-							<li>启用</li>
-							<li>2020-1-4</li>
-							<li class="cd-font-white-color">
-								<span class=" cd-bg-blue-color cd-boder-circle re-click" @click="dialogFormVisible = true"><i class="iconfont">&#xe76c;</i></span>
-								<span class="cd-bg-red-color cd-boder-circle re-click"><i class="iconfont " @click="delete_role_single(item.id)">&#xe601;</i></span>
-							</li>
+					<div v-for="(item,index) in users" :key="index" class="cd-mar-top">
+						<ul class="us-record-position" >
+							<el-checkbox v-model="checked" :label="item.id" class="us-mar-right"></el-checkbox>
+							<li class="cd-mar-left us-content-name">{{item.name}}</li>
+							<li class="us-content-jobNumber">{{item.job_number}}</li>
+							<li class="us-content-name">{{item.gender}}</li>
+							<li class="us-content-name">{{item.roleName}}</li>
+							<li class="us-content-jobNumber">{{item.mobile}}</li>
+							<li class="us-content-faculty">{{item.email}}</li>
+							<li class="us-content-faculty">{{item.faculty}}</li>
+							<li class="us-content-name">{{item.status}}</li>
+							<p class="cd-font-white-color us-content-name ">
+								<button class="cd-bg-blue-color us-btn cd-boder-circle cd-cursor" @click="updateUser(item)">
+									<i class="iconfont">&#xe76c;</i>
+								</button>
+									<button class="cd-bg-red-color us-btn cd-boder-circle cd-cursor">
+										<i class="iconfont" @click="delete_user_single(item.mobile)">&#xe601;</i>
+									</button>
+									
+							</p>
 						</ul>
 					</div>
 				</div>
@@ -81,44 +90,44 @@
 					<div class="us-add ">
 						<p class="cd-df-au cd-mar-top">
 							<span>用户名
-							<input type="text" v-model="name" style="margin-right: 16px;">
+							<input type="text" v-model="name" style="margin-right: 16px;" id="userAdd">
 							</span>
 							<span>手机号
-							<input type="text" v-model="mobile" style="margin-right: 20px;">
+							<input type="text" v-model="mobile" style="margin-right: 20px;" id="userAdd">
 							</span>
 						</p>
 						
 						<p class="cd-df-au cd-mar-top">
 							<span>学号
-							<input type="text" v-model="jobNumber">
+							<input type="text" v-model="jobNumber" id="userAdd">
 							</span>
 							<span>邮箱
-							<input type="text" v-model="email">
+							<input type="text" v-model="email" id="userAdd">
 							</span>
 						</p>
 						
 						<p class="cd-df-au cd-mar-top">
 							<span>学校
-							<input type="text" v-model="college">
+							<input type="text" v-model="college" id="userAdd">
 							</span>
 							<span>院系
-							<input type="text" v-model="department">
+							<input type="text" v-model="faculty" id="userAdd">
 							</span>
 						</p>
 						
 						<p class="cd-df-bt cd-mar-top" style="padding-left: 60px;">
 							<span class="cd-col-6" style="margin-right: 35px;">性别
-							<el-radio v-model="gender" label="1">男</el-radio>
-							<el-radio v-model="gender" label="2">女</el-radio>
+							<el-radio v-model="gender" label="男">男</el-radio>
+							<el-radio v-model="gender" label="女">女</el-radio>
 							</span>
 							<span class="cd-col-6">状态
-							<el-radio v-model="status" label="1">激活</el-radio>
-							<el-radio v-model="status" label="2">禁用</el-radio>
+							<el-radio v-model="status" label="false">禁用</el-radio>
+							<el-radio v-model="status" label="true">激活</el-radio>
 							</span>
 						</p>
 						<p class="cd-mar-top">
 							<span class="cd-col-6  " style="padding-left: 60px;">角色
-							 <el-select v-model="value" placeholder="请选择" >
+							 <el-select v-model="userRole" placeholder="请选择" >
 							    <el-option
 							      v-for="item in addrole"
 							      :key="item.value"
@@ -128,43 +137,13 @@
 							  </el-select>
 							  </span>
 						</p>
-						
 					</div>
-					
-					
-					
 					<div slot="footer" class="dialog-footer">
-						<el-button @click="dialogFormVisible = false">取 消</el-button>
-						<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-					</div>
-				</el-dialog>
-				
-				<el-dialog title="修改用户信息" :visible.sync="changeInformation">
-					<el-form :model="form">
-						<el-form-item label="用户名称" :label-width="formLabelWidth">
-							<el-input v-model="form.name" autocomplete="off" class="us-input-sm"></el-input>
-						</el-form-item>
-						<el-form-item label="用户账号" :label-width="formLabelWidth">
-							<el-input v-model="form.sign" autocomplete="off" class="us-input-sm"></el-input>
-						</el-form-item>
-						<el-form-item label="用户角色" :label-width="formLabelWidth">
-						<el-select v-model="value" placeholder="请选择" >
-						   <el-option
-						     v-for="item in users"
-						     :key="item.value"
-						     :label="item.label"
-						     :value="item.value">
-						   </el-option>
-						 </el-select>
-						 </el-form-item>
-					</el-form>
-					<div slot="footer" class="dialog-footer">
-						<el-button @click="changeInformation = false">取 消</el-button>
-						<el-button type="primary" @click="changeInformation = false">确 定</el-button>
+						<el-button @click="dialogFormVisible=false">取 消</el-button>
+						<el-button type="primary" @click="post_user()">确 定</el-button>
 					</div>
 				</el-dialog>
 			</div>
-			
 		</div>
 		
 		
@@ -176,15 +155,25 @@
 	export default {
 		  data () {
 		    return {
-				status:'1',
-				gender:'1',
+				name:'',
+				mobile:'',
+				jobNumber:'',
+				email:'',
+				college:'',
+				faculty:'',
+				roleName:'',
+				status:'',
+				gender:'',
 				role:false,
 				active:true,
 				checked:[],
-				changeInformation:false,
+				userJudge:'',
 				dialogFormVisible: false,
 				formLabelWidth: '70px',
 				roleMeun: [],
+				currentPage:1,
+				pageSize:6,
+				userId:'',
 				aa:[],
 		        options: [{
 		                 value: '选项1',
@@ -196,7 +185,8 @@
 		                 value: '选项3',
 		                 label: '正常'
 		               }],
-				users: [{
+				
+				addrole: [{
 				         value: '1',
 				         label: '教师'
 				       }, {
@@ -205,10 +195,14 @@
 				       }, {
 				         value: '3',
 				         label: '学生'
-				       }],	   
+				       }],	   			  
 			    roles:[],
 				data: [],
+				users:[],
+				excel: [],
+				excels: [],
 				value:'',
+				userRole:'',
 				defaultProps: {
 					label: 'name'
 				},
@@ -221,16 +215,24 @@
 					   	type: [],
 					   	resource: '',
 					   	desc: ''
-					   }
+					   
 				
-		    }
+		    },
+			statusCode:''
+			}
 		  },
 		  created () {
 		    this.get_role()
+			this.get_user()
 		  },
 		  
 		  methods: {
-			  roleActive(){
+			  //增加用户
+			addUser(){
+				  this.dialogFormVisible = true;
+				  this.userJudge = 0;
+			  },
+			roleActive(){
 				  this.role=!this.role;
 			  },
 			get_role() {
@@ -245,9 +247,164 @@
 					.catch(function(error) {
 						console.log(error)
 					});
-			}
+			},
+			get_user(){
+				this.axios({
+					method:'post',
+					url:this.GLOBAL.baseUrl+'/s/user',
+					data:{
+						"currentPage":this.currentPage,
+						"pageSize":this.pageSize
+					}
+				})
+				.then(res=>{
+					this.users =res.data.data
+				})
+				.catch(function(error){
+					console.log(error)
+				});
+			},
+			//删除单个用户
+           delete_user_single(mobile) {
+           	this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+           		confirmButtonText: '确定',
+           		cancelButtonText: '取消',
+           		type: 'warning'
+           	}).then(() => {
+           		// 删除角色
+           			this.axios({
+           					method: 'delete',
+           					url: this.GLOBAL.baseUrl + '/d/user/',
+							data:{
+								"mobileList":mobile
+           				},
+						})
+           				.then(res => {
+           					this.$message({
+           						message: '删除成功',
+           						type: 'success',
+           						duration: '1000'
+           					});
+							this.get_user();
+           				})
+           		
+           	}).catch(() => {
+           		this.$message({
+           			type: 'info',
+           			message: '已取消删除'
+           		});
+           	});
+           },
+		   //修改用户
+		   updateUser(item){
+			   this.userId = item.id;
+			   this.userJudge = 1;
+			   this.dialogFormVisible = true;
+			   this.name=item.name,
+			   this.mobile=item.mobile,
+			   this.jobNumber=item.job_number,
+			   this.email=item.email,
+			   this.faculty = item.faculty,
+			   this.gender = item.gender
+			   if(item.roleId == 1){
+				   this.userRole = "1"
+			   }else if(item.roleId == 2){
+				   this.userRole = "2"
+			   }else {
+				   this.userRole = "3"
+			   }
+			   if(item.status==1){
+				   this.status="true"
+			   } else {
+				   this.status = "false"
+			   }
+		   },
+		   //修改and增加用户
+		   post_user(){
+		   	if(this.userJudge == 1){
+				console.log(this.userRole)
+				console.log(this.name)
+				console.log(this.faculty)
+		   		this.axios({
+		   			method: 'put',
+		   			url: this.GLOBAL.baseUrl + '/u/user', //后端api
+		   			data: {
+						"id": this.userId,
+						"name":this.name,
+						"mobile":this.mobile,
+						"jobNumber":this.jobNumber,
+						"email":this.email,
+						"school":this.college,
+						"faculty":this.faculty,
+						"status":this.status,
+						"gender":this.gender,
+						"roleId": this.userRole
+		   			}
+		   		}).then(res => {
+		   			this.$message({
+		   			          message: '修改成功',
+		   			          type: 'success',
+		   					  duration: '1000'
+		   			        });
+		   					this.dialogFormVisible = false;
+		   			document.getElementById('userAdd').value='';
+		   			this.get_user()
+		   		});
+		   	} else if(this.userJudge == 0){
+				if(this.status == 1){
+					this.statusCode = true;
+				}else {
+					this.statusCode = false;
+				}
+		   	this.axios({
+		   		method: 'post',
+		   		url: this.GLOBAL.baseUrl + '/p/user/single', //后端api
+		   		data: {
+					"name":this.name,
+					"mobile":this.mobile,
+					"jobNumber":this.jobNumber,
+					"email":this.email,
+					"school":this.college,
+		   			"faculty":this.faculty,
+					"roleName":this.roleName,
+					"status":this.statusCode,
+					"gender":this.gender,
+					"roleId": this.userRole
+		   		}
+		   	}).then(res => {
+		   		this.$message({
+		   		          message: '添加成功',
+		   		          type: 'success',
+		   				  duration: '1000'
+		   		        });
+		   				this.dialogFormVisible = false;
+		   		document.getElementById('userAdd').value='';
+		   		this.get_user()
+		   	});
+		   	}
+		   },
 		
-			 
+		    inputFile: function() {
+		    	var _this = this;
+		    	let formData = new FormData();
+		    	for (let j = 0; j < event.target.files.length; j++) {
+					formData.append('file', event.target.files[j]);
+					this.axios({
+						method: 'post',
+						url: this.GLOBAL.baseUrl + '/p/user',
+						headers: {
+							'Content-Type': 'multipart/form-data'
+						},
+						data: formData,
+						processData: false,
+						contentType: false
+					}).then(res => {
+						this.get_user()
+					});
+		    	}
+		    }
+		
+			
 			
 		  }
 		  
@@ -280,10 +437,9 @@
 		border: none;
 		margin-left: 5px;
 		border-radius: 5px;
+		outline: none;
 	}
-	.us-add-position{
-		margin-left: 0px;
-	}
+	
 	.us-content {
 		margin-top: 20px;
 		padding: 0 20px;
@@ -291,32 +447,11 @@
 	.us-input-width{
 		width: 95%;
 	}
-	ul {
-		margin-top: 40px;
-		width: 100%;
-		border-bottom: 1px solid rgb(239, 241, 247);
-		height: 40px;
-	}
 	
-	ul li {
-		margin-top: 15px;
-		height: 100%;
-		list-style: none;
-		flex: 0 0 12%;
-		text-align: center;
-	}
 	
-	li span {
-		display: inline-block;
-		width: 30px;
-		height: 30px;
-		margin-right: 10px;
-		text-align: center;
-		line-height: 30px;
-		padding-left: 5px;
-	}
 	.us-record-position{
-		margin-left: -18px;
+		width: 100%;
+		margin-left: -40px;
 	}
 	.us-click{
 		cursor: pointer;
@@ -346,5 +481,60 @@
 		font-size: 16px;
 		font-weight: 600;
 	}
-	  
+	.us-file{
+		opacity: 0;
+		width: 40px;
+	}
+	
+	ul {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+	}
+	
+	.us-content-name {
+		width: 100px;
+	}
+	
+	.us-content-jobNumber {
+		width: 160px;
+	}
+	
+	.us-content-faculty {
+		width: 200px;
+	}
+	
+	.us-content-name1 {
+		width: 140px;
+	}
+	
+	.us-content-jobNumber1 {
+		width: 90px;
+	}
+	
+	.us-content-name2 {
+		width: 150px;
+	}
+	
+	.us-content-jobNumber2 {
+		width: 90px;
+	}
+	
+	.us-content-faculty2 {
+		width: 180px;
+	}
+	
+	.us-mar-right {
+		margin-right: 10px;
+	}
+	
+	.us-btn {
+		width: 30px;
+		height: 30px;
+		margin-right: 5px;
+		font-size: 18px;
+		color: #FFFFFF;
+		border: none;
+	}
 </style>

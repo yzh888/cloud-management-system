@@ -1,12 +1,12 @@
 /* 全局iconfont */
 @font-face {
   font-family: 'iconfont';  /* project id 1614523 */
-  src: url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.eot');
-  src: url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.woff2') format('woff2'),
-  url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.woff') format('woff'),
-  url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_1614523_j14g74xl4yh.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_1614523_pu27yrtg33e.eot');
+  src: url('//at.alicdn.com/t/font_1614523_pu27yrtg33e.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1614523_pu27yrtg33e.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1614523_pu27yrtg33e.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1614523_pu27yrtg33e.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1614523_pu27yrtg33e.svg#iconfont') format('svg');
 }
 
 .iconfont{
@@ -64,6 +64,10 @@ a {
 
 .cd-df {
 	display: flex;
+}
+
+.cd-cursor{
+	cursor: pointer;
 }
 
 /* 横向左对齐,纵向上对齐 */

@@ -1,188 +1,256 @@
 <template>
-	<div class="n-container">
-		<div class="n-upside-bar cd-df-center">
-			<div class="cd-col-2 cd-df-center">
-				<span><i class="iconfont cd-title-font">&#xe617;</i>
-				Cloud
+	<div class="cd-df-start">
+		<div class="side-bar cd-col-start">
+			<div class="n-logo cd-df-left-start">
+				<span class="cd-mar-right">
+					<img src="../assets/image/shuye.png" alt="">
 				</span>
+				<span>云班课管理系统</span>
 			</div>
-			<div class="cd-df-bt n-upside-right">
-				<ul class="n-upside-bar-left">
-					<span><i class="iconfont">&#xe6a9;</i></span>
-					<span><router-link to="nav/index"><i class="iconfont">&#xe611;</i>首页 </router-link></span>
-					<!-- <span><i class="iconfont">&#xe641;</i>系统</span> -->
-					<!-- <span><i class="iconfont">&#xe641;</i>系统</span> -->
-					<span>
-								<el-dropdown>
-								  <span>
-								   <i class="iconfont">&#xe641;</i>系统
-								  </span>
-								  <el-dropdown-menu slot="dropdown">
-								    <el-dropdown-item  v-model="role" @click.native="al(0)">
-										<router-link to="role"><i class="iconfont">&#xe69a;</i>角色管理
-										</router-link>
-									</el-dropdown-item>
-								    <el-dropdown-item v-model="permission" @click.native="al(1)">
-										<router-link to="permission"><i class="iconfont">&#xe85f;</i>权限管理
-										</router-link>
-									</el-dropdown-item>
-									<el-dropdown-item v-model="user" @click.native="al(2)">
-										<router-link to="user"><i class="iconfont">&#xe620;</i>用户管理
-										</router-link>
-									</el-dropdown-item>
-								  </el-dropdown-menu>
-								</el-dropdown>
-					</span>
-				</ul>
-				<ul class="n-upside-bar-right">
-					<span><i class="iconfont">&#xe628;</i></span>
-					<span><i class="iconfont">&#xe6c2;</i></span>
-					<span>admin</span>
-				</ul>
-			</div>
-		</div>
-		<div class="n-bottom cd-df-start">
-			<div class="n-side-bar cd-col-2">
-				<div class="cd-col-top-start" v-if="sideDisplay">
-					<div class="n-width">
-						<div class="cd-df-bt n-width n-side-system" @click="bb">
-						<span>
-							<i class="iconfont">&#xe641;</i>系统管理
-						</span>
-						<span class="n-change" :class="{braketsChange:active}">
-							<i class="iconfont">&#xe600;</i>
-						</span>
+			<!-- DIY树型控件 -->
+			<div class="cd-cursor">
+				<div class="pm-permission cd-col-left-start" v-for="(item, index) in sideMenuImg" :key="index">
+						<div class="cd-df-bt pm-width n-parent-menu" v-if="sideMenuImg.length!=0">
+							<p class="cd-df-left-start " @click="pmMenu(index)">
+								<img :src="item.src" alt="">
+								{{item.name}}</p>
+								<p class="n-brakets" :class="{braketsChange:aa[index]}">
+									<span v-if="item.childList != null "><i class="iconfont">&#xe600;</i></span>
+								</p>
 						</div>
-						<div class="cd-col-center" v-if="systemSubmenuDisplay">
-							<span class="cd-mar-top"><router-link to="role">角色管理</router-link></span>
-							<span class="cd-mar-top"><router-link to="permission">权限管理</router-link></span>
-							<span class="cd-mar-top"><router-link to="user">用户管理</router-link></span>
+						<div class="n-childMenu">
+						<div class="cd-df-bt pm-width n-child-menu" v-for="(item1, index1) in item.childList" 
+						:key="index1" v-if="aa[index]">
+							<p @click="choiceMenu(item.name,item1.name)" class="col-6" :class="{childMenu: active1}">
+								<img :src="item1.src" alt="">{{item1.name}}
+								</p>
 						</div>
-					</div>
-					
-					
+						</div>
 				</div>
 			</div>
-			<div class="n-width">
-                <router-view />
+
+		</div>
+	    <div class="n-right">
+			<div class="n-up-bar cd-df-bt">
+				<p class="n-up-bar-top cd-df-left-start">
+					<span class="n-up-bar-icon">
+						<img src="../assets/image/xuanxiang.png" alt="">
+					</span>
+					<span v-if="tipVisialbe">
+					<span class="cd-mar-right">/</span>
+					<span class="cd-mar-right cd-lg-font">{{parentMenu}}</span>
+					<span class="cd-mar-right">/</span>
+					<span>{{childMenu}}</span>
+					</span>
+				</p>
+				<p class="cd-col-2">
+					<router-link to="role"><span>admin</span></router-link>
+				</p>
 			</div>
-			
+			<div>
+				<router-view />
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-export default {
-	  data () {
-	    return {
-			 user:'',
-	         sideDisplay: false,
-			 active:false,
-			 systemSubmenuDisplay:false,
-			 role: '',
-			 permission: ''
-	    }
-	  },
-	  created () {
-	    
-	  },
-	  
-	  methods: {
-		 al() {
-			 this.sideDisplay = true;
-			 this.active = true;
-			 this.systemSubmenuDisplay = true;
-		 },
-		 
-		 bb() {
-			 this.active = !this.active
-			 this.systemSubmenuDisplay = !this.systemSubmenuDisplay
-		 }
-	  }
-	  
+	export default {
+		data() {
+			return {
+				menuPermission: [],
+				aa: [],
+				router: "permission",
+				active: false,
+				active1:false,
+				jiantouAcitve:false,
+				tipVisialbe:false,
+				parentMenu:'',
+				childMenu:'',
+				sideMenuImg:[{
+					name: "主页",
+					src:require('../assets/image/zhuye.png')
+				},{
+					name: "系统管理",
+					src:require('../assets/image/xitongguanli.png'),
+					childList:[{
+					name: "账户管理",
+					src:require('../assets/image/zhanghuguanli.png'),
+				},{
+					name: "角色管理",
+					src:require('../assets/image/juese.png'),
+				},{
+					name: "权限管理",
+					src:require('../assets/image/permission.png'),
+				},{
+					name: "班课管理",
+					src:require('../assets/image/bankeguanli.png'),
+				},{
+					name: "资源管理",
+					src:require('../assets/image/ziyuanguanli.png'),
+				},{
+					name: "活动管理",
+					src:require('../assets/image/huodongguanli.png'),
+				},{
+					name: "消息管理",
+					src:require('../assets/image/xiaoxiguanli.png'),
+				}
+				]
+				},{
+					name: "设置管理",
+					src:require('../assets/image/shezhi.png'),
+					childList:[{
+							name: "初始化",
+							src:require('../assets/image/xiaoxiguanli.png'),
+					}]
+				},
+				]
+			}
+		},
+		methods: {
+			pmMenu(index) {
+				this.aa.splice(index, 1, !this.aa[index])
+				this.active1=true;
+				this.jiantouAcitve= !this.jiantouAcitve
+			},
+
+            choiceMenu(parentName, childName){
+				this.parentMenu = parentName
+				this.childMenu = childName
+				this.tipVisialbe = true
+				switch(childName){
+					case "账户管理" : 
+					         this.$router.push('user')
+					         break
+					case "角色管理" :
+							this.$router.push('role')
+							break
+					case "权限管理" :
+					        this.$router.push('permission')
+							break
+					case "班课管理" :
+					        this.$router.push('')
+							break
+					case "资源管理" :
+					        this.$router.push('resource')
+							break
+					case "活动管理" :
+					        this.$router.push('activity')
+							break
+					case "消息管理" :
+					        this.$router.push('news')
+							break
+				}
+			},
+			
+			get_permission() {
+				this.axios({
+					method: 'get',
+					url: this.GLOBAL.baseUrl,
+				}).then(res => {
+					this.menuPermission = res.data.data;
+					//给aa数组初始化
+					for (var i = 0, len = res.data.data.length; i < len; i++) {
+						this.aa.splice(i, 0, false);
+					}
+					console.log(JSON.stringify(this.aa));
+				})
+			},
+		},
+		created() {
+			this.get_permission()
+		}
 	}
 </script>
 
-<style>
+<style scoped>
 	
-	ul {
-		height: 100%;
-	}
-	
-	.n-width {
-		width: 100%;
-	}
-	
-	 .tag {
-	        cursor: pointer;
-	    }
-		
-	.n-container {
-		width: 100%;
-		height: 92vh;
-	}
-
-	.n-upside-right {
-		width: 100%;
-	}
-
-	.n-upside-bar {
-		position: fixed;
-		left: 0;
-		top: 0;
-		height: 8vh;
-		background-color: #ebf1f6;
-		width: 100%;
-	}
-
+     .n-up-bar {
+		 width: 100%;
+		 height: 60px;
+		 padding: 0 10px;
+		 background-color: #f0f1f5;;
+	 }	
+	 
+	 .n-right {
+		 width: 100%;
+	 }
+	 
+	 .n-up-bar-icon {
+		 width: 18px;
+		 height: 18px;
+		 margin-right: 30px;
+	 }
+	 
 	.n-logo {
-		width: 200px;
-		height: 100%;
-		background-color: #000000;
-	}
-
-	.n-upside-bar-left span {
-		margin-right: 40px;
-	}
- 
-    span i {
-		margin-right: 5px;
+		height: 60px;
+		font-size: 14px;
+		color: #EEEEEE;
+		padding: 0 10px;
+		background-color:  rgba(48, 65, 86);
 	}
 	
-	.n-upside-bar-right span {
-		margin-right: 30px;
-	}
-
-	.n-side-bar {
-		background-color: #ebf1f6;
-		width: 200px;
-		height: 100%;
-		padding-top: 30px;
+	.pm-width {
+		width: 100%;
 	}
 	
-	.n-side-system {
-		padding: 0 30px;
+	.pm-permission {
+		width: 200px;
+		color: #EEEEEE;
+		font-size: 16px;
 	}
-
-    .braketsChange {
+	
+	.side-bar {
+		background-color: rgba(48, 65, 86);
+        width: 200px;
+		height: 100vh;
+	}
+	
+	.n-childMenu {
+		background-color: rgb(31, 45, 61);
+		width: 100%;
+	}
+	
+	.childMenu {
+		margin-left: 20px;
+	}
+	
+	.n-parent-menu {
+		height: 50px;
+		padding: 0 10px;
+	}
+	
+	.n-parent-menu:hover {
+		background-color: #263445;
+	}
+	
+	.n-parent-menu img {
+		width: 18px;
+		height: 18px;
+		margin-right: 10px;
+	}
+	
+	.n-child-menu {
+		height: 45px;
+		font-size: 14px;
+		padding: 0 10px;
+	}
+	
+	.n-brakets {
+		transition: all 0.3s;
+	}
+	
+	.n-child-menu:hover {
+		background-color: #001528;
+	}
+	
+	.n-child-menu img {
+		width: 14px;
+		height: 14px;
+		margin-right: 10px;
+	}
+	
+	.braketsChange {
 	    transform: rotate(90deg);
 	}
-	
-	.n-change {
-		transition: all 0.2s;
-	}
-	
-	.n-bottom {
-		width: 100%;
-		height: 100%;
-		margin-top: 8vh;
-	}
-	
-	.el-dropdown {
-	    vertical-align: top;
-	  }
-	  
-	  .el-dropdown-menu {
-		 height: 130px;
-	  }
 </style>
