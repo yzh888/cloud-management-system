@@ -47,7 +47,7 @@
 					<router-link to="role"><span>admin</span></router-link>
 				</p>
 			</div>
-			<div>
+			<div class="n-content">
 				<router-view />
 			</div>
 		</div>
@@ -119,6 +119,9 @@
 				this.childMenu = childName
 				this.tipVisialbe = true
 				switch(childName){
+					case "主页"  :
+					         this.$router.push('index')
+							 break
 					case "账户管理" : 
 					         this.$router.push('user')
 					         break
@@ -166,11 +169,20 @@
 <style scoped>
 	
      .n-up-bar {
+		 position: fixed;
+		 left: 200px;
+		 top: 0;
 		 width: 100%;
 		 height: 60px;
 		 padding: 0 10px;
-		 background-color: #f0f1f5;;
+		 background-color: #B5B5B5;;
+		 z-index: 999;
 	 }	
+	 
+	 .n-content {
+		 margin-left: 200px;
+		 margin-top: 80px;
+	 }
 	 
 	 .n-right {
 		 width: 100%;
@@ -201,9 +213,13 @@
 	}
 	
 	.side-bar {
+		position: fixed;
+		left: 0;
+		top: 0;
 		background-color: rgba(48, 65, 86);
         width: 200px;
 		height: 100vh;
+		z-index: 1000;
 	}
 	
 	.n-childMenu {

@@ -5,7 +5,6 @@ import Permission from '../views/Permission.vue'
 import Role from '../views/Role.vue'
 import Index from '../views/Index.vue'
 import User from '../views/User.vue'
-
 Vue.use(VueRouter)
 
 const routes = [
