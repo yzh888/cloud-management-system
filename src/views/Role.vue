@@ -6,7 +6,7 @@
 			<span class="cd-mar-sm-right">标识</span>
 			<input type="text" placeholder="标识" class="cd-mar-right re-search-input">
 			<button class="cd-mar-right re-search-btn cd-del-border cd-bg-blue-color cd-font-white-color">
-				<i class="iconfont cd-mar-sm-right">&#xe628;</i>查询
+				<i class="iconfont cd-mar-sm-right" >&#xe628;</i>查询
 			</button>
 			<button class="re-search-btn cd-del-border">
 				<i class="iconfont cd-mar-sm-right">&#xe851;</i>重置
@@ -56,7 +56,6 @@
 				<el-form :model="form">
 					<el-input placeholder="请输入关键字搜索" v-model="filterText" class="search-length" clearable>
 					</el-input>
-					<el-button type="primary" class="checkbox-position" @click="get_dim_role()">搜 索</el-button>
 				</el-form>
 				<el-tree :data="data"
 				show-checkbox
@@ -164,16 +163,11 @@
 				this.axios({
 						method: 'get',
 						url: this.GLOBAL.baseUrl + '/g/',
-						data: {
-							name: this.name,
-							code: this.code
-						}
 					})
 					.then(res => {
 						for(var i = 0; i < res.data.data.length; i++){
 							this.roles.splice(i,1,res.data.data[i])
 						}
-						
 					})
 					.catch(function(error) {
 						console.log(error)
@@ -186,9 +180,7 @@
 					method: 'get',
 					url: this.GLOBAL.baseUrl + '/g/rp/' + id,
 				}).then(res =>{
-					console.log(res.data.data)
 					this.gridData = res.data.data
-					console.log(this.gridData)
 				})
 			},
 			
@@ -221,8 +213,6 @@
 			},
 			
 			post_role() {
-				console.log(this.form.sign)
-				console.log(this.form.name)
 				this.axios({
 						method: 'post',
 						url: this.GLOBAL.baseUrl + '/p/re',
@@ -237,7 +227,7 @@
 							type: 'success',
 							duration: '1000'
 						});
-						// this.get_role()
+					    this.get_role()
 						this.dialogFormVisible = false
 					})
 					.catch(function(error) {
@@ -263,17 +253,16 @@
 						this.axios({
 								method: 'delete',
 								url: this.GLOBAL.baseUrl + '/d/re/' + this.checked[i],
-							})
-							.then(res => {
+							}).then(res => {
+								this.get_role()
 								this.$message({
 									message: '删除成功',
 									type: 'success',
 									duration: '1000'
 								});
+								
 							})
 					}
-
-					this.get_role()
 				}).catch(() => {
 					this.$message({
 						type: 'info',
@@ -298,11 +287,8 @@
 									message: '删除成功',
 									type: 'success',
 									duration: '1000'
-								});
+								});this.get_role();
 							})
-					
-			
-					this.get_role();
 				}).catch(() => {
 					this.$message({
 						type: 'info',

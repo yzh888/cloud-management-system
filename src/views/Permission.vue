@@ -1,7 +1,7 @@
 <template>
 	<div class="pm-container">
 		<div class="pm-search">
-			<input type="text" placeholder="权限名称" class="pm-search-input cd-mar-right">
+			<input type="text" placeholder="权限名称" class="pm-search-input cd-mar-right" v-model="searchName">
 			 <el-select v-model="value" placeholder="请选择" >
 			    <el-option
 			      v-for="item in options"
@@ -11,7 +11,7 @@
 			    </el-option>
 			  </el-select>
 			  <button class="pm-search-btn cd-font-white-color cd-bg-blue-color">刷新</button>
-			  <button class="pm-search-btn cd-font-white-color cd-bg-blue-color">查询</button>
+			  <button class="pm-search-btn cd-font-white-color cd-bg-blue-color" @click="search_permission()">查询</button>
 			  <button class="pm-search-btn cd-font-white-color cd-bg-blue-color" @click="addpermission">新增</button>
 		</div>
 		<div class="pm-content">
@@ -24,10 +24,12 @@
 		<div class="block">
 					    <el-tree
 					      :data="data"
-					      node-key="id"
-						   :props="defaultProps"
-					      default-expand-all
-					      :expand-on-click-node="false">
+					       default-expand-all 
+					       :filter-node-method=filterNode node-key="id" 
+					       @check-change="getNodeData"
+					      ref="tree" highlight-current 
+					      :props="defaultProps
+					      ">
 					      <span  class="custom-tree-node pm-el-childMenu" slot-scope="{ node, data }">
 					        <span>{{ node.label }}</span>
 					        <span class="el-tree-span">
@@ -98,15 +100,15 @@
 		data(){
 			return {
 				  options: [{
-				          value: '选项1',
-				          label: '全部'
-				        }, {
-				          value: '选项2',
-				          label: '禁用'
-				        }, {
-				          value: '选项3',
-				          label: '正常'
-				        }],
+						        value: '0',
+						        label: '菜单权限'
+						      }, {
+						        value: '1',
+						        label: '按钮权限'
+						      }, {
+						        value: '2',
+						        label: '目录权限'
+						      }],
 						types: [{
 						        value: '0',
 						        label: '菜单权限'
@@ -118,6 +120,7 @@
 						        label: '目录权限'
 						      }],
 				        value: '',
+						searchName:'',
 						zhezhaoVisible1: false,
 						zhezhaoVisible: false,
 						permissionName: '',
@@ -133,7 +136,8 @@
 						active: false,
 						permissionJudge: '',
 						permissionMenu:false,
-						data : '',
+						filterText:'',
+						data : [],
 										 defaultProps: {
 										          children: 'childList',
 										          label: 'name'
@@ -145,7 +149,39 @@
 			this.get_permission()
 		},
 		
+		watch:{
+			searchName(val) {
+				this.$refs.tree.filter(val);
+			}
+		},
+		
 		methods: {
+			search_permission(){
+				alert(this.searchName)
+				this.axios({
+					method:'post',
+					url:this.GLOBAL.baseUrl + '/g/b/pm/',
+					data:{
+						    "fieldList": "this.searchName"
+					}
+				}).then(res=>{
+					this.data = res.data.data
+					console.log(this.data)
+				})
+			},
+			
+			getNodeData(){
+				let arr = this.$refs.tree.getCheckedNodes()
+				for(var i=0;i<this.$refs.tree.getCheckedNodes().length;i++){
+					  this.data.splice(i,1,arr[i].id)
+					}
+				},
+			
+			filterNode(value, data) {
+				if (!value) return true;
+				return data.name.indexOf(value) !== -1;
+			},
+			
 			// 新增权限
 			post_permission(){
 				if(this.permissionJudge == 1){
@@ -221,6 +257,7 @@
 							for(var i = 0; i < res.data.data.length; i++){
 								this.data.splice(i,1,res.data.data[i])
 							}
+							console.log(this.data)
 		   				})
 		   			},
 			addpermission(){

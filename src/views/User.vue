@@ -1,14 +1,13 @@
 <template>
 	<div class="us-container">
 		<div class="us-search cd-df-start">
-			<input type="text" placeholder="输入角色名称搜索" class="us-search-input cd-mar-right">
-			<input type="text" placeholder="输入用户名称或账号搜索" class="us-search-input cd-mar-right">
-			<el-select v-model="value" placeholder="请选择">
+			<input type="text" placeholder="输入用户名称或账号搜索" v-model="user_search" class="us-search-input cd-mar-right">
+			<el-select v-model="user_status_choice" @change="get_user_status" placeholder="请选择">
 				<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
 				</el-option>
 			</el-select>
-			<button class="us-search-btn cd-font-white-color cd-bg-green-color cd-mar-sm-top">刷新</button>
-			<button class="us-search-btn cd-font-white-color cd-bg-orange-color cd-mar-sm-top">重置</button>
+			<button class="us-search-btn cd-font-white-color cd-bg-green-color cd-mar-sm-top" @click="search_user()">搜索</button>
+			<button class="us-search-btn cd-font-white-color cd-bg-orange-color cd-mar-sm-top" @click="update_user_password()">重置</button>
 		</div>
 		<div class="us-content">
 
@@ -23,7 +22,7 @@
 						<span>学生</span>
 					</div>
 				</div>
-				<div class="" style="width: 90%;">
+				<div class="cd-col-start" style="width: 90%;">
 					<div class="cd-df-left-start">
 						<button class="us-search-btn cd-font-white-color cd-bg-blue-color cd-mar-sm-top  cd-mar-right cd-cursor" @click="addUser()">
 							<i class="iconfont cd-font-white-color cd-sms-font cd-mar-sm-right">&#xe75e;</i>新增
@@ -38,37 +37,39 @@
 						<button class="us-search-btn cd-font-white-color cd-bg-orange-color cd-mar-sm-top cd-cursor" style="margin-left: -40px;">
 							<i class="iconfont cd-font-white-color cd-sms-font cd-mar-sm-right">&#xe889;</i>
 							<span>导入</span>
-
+						</button>
+						<button class="us-search-btn cd-font-white-color cd-df-center cd-bg-red-color cd-mar-sm-top cd-mar-left cd-cursor" @click="export_user()">
+							<img src="../assets/image/daochu.png" class="us-function-icon cd-mar-sm-right">导出
 						</button>
 					</div>
 					<div class="cd-col-left-start us-title cd-mar-top">
 						<ul class="cd-df-left-start" style="text-align: left;">
-							<li class="cd-mar-left us-content-jobNumber2">用户名</li>
-							<li class="us-content-name1">学号</li>
-							<li class="us-content-jobNumber2">性别</li>
-							<li class="us-content-jobNumber2">角色</li>
-							<li class="us-content-name2">电话</li>
-							<li class="us-content-faculty2 ">邮箱</li>
-							<li class="us-content-faculty2">院系</li>
+							<li class="us-content-name1" >账号</li>
+							<li class="cd-mar-left us-content-jobNumber2 cd-mar-right">用户名</li>
+							<li class="us-content-name1 cd-mar-right">学号</li>
+							<li class="us-content-jobNumber2 cd-mar-right">性别</li>
+							<li class="us-content-jobNumber2 cd-mar-right">角色</li>
+							<li class="us-content-faculty2 cd-mar-right">邮箱</li>
+							<li class="us-content-faculty2 cd-mar-right">院系</li>
 							<li class="us-content-jobNumber2">状态</li>
 							<li class="us-content-jobNumber2">操作</li>
 						</ul>
 					</div>
-					<div v-for="(item,index) in users" :key="index" class="cd-mar-top">
+					<div v-for="(item,index) in users.slice(minSize, maxSize)" :key="index" class="cd-mar-top">
 						<ul class="us-record-position">
-							<el-checkbox v-model="checked" :label="item.id" :value="item.mobile" @change="get_users(item.mobile)" class="us-mar-right"></el-checkbox>
-							<li class="cd-mar-left us-content-name">{{item.name}}</li>
+							<el-checkbox v-model="checkUserList" :label="item.mobile" class="us-content-name1"></el-checkbox>
+							<li class="cd-mar-left us-content-name us-mar-left">{{item.name}}</li>
 							<li class="us-content-jobNumber">{{item.job_number}}</li>
 							<li class="us-content-name">{{item.gender}}</li>
 							<li class="us-content-name">{{item.roleName}}</li>
-							<li class="us-content-jobNumber">{{item.mobile}}</li>
 							<li class="us-content-faculty">{{item.email}}</li>
 							<li class="us-content-faculty">{{item.faculty}}</li>
 							<li class="us-content-name">{{item.status}}</li>
 							<p class="cd-font-white-color us-content-name ">
-								<button class="cd-bg-blue-color us-btn cd-boder-circle cd-cursor" @click="updateUser(item)">
+								<!-- <button class="cd-bg-blue-color us-btn cd-boder-circle" @click="updateUser(item)" disabled="disabled">
 									<i class="iconfont">&#xe76c;</i>
-								</button>
+								</button> -->
+								 <el-button type="primary" icon="el-icon-edit" circle disabled ></el-button>
 								<button class="cd-bg-red-color us-btn cd-boder-circle cd-cursor">
 									<i class="iconfont" @click="delete_user_single(item.mobile)">&#xe601;</i>
 								</button>
@@ -76,8 +77,15 @@
 							</p>
 						</ul>
 					</div>
+				
+				   <div class="cd-df-center cd-mar-top cd-width" v-if="users.length>=10">
+					   <span class="cd-mar-right">共{{this.users.length}}条</span>
+					   <img src="../assets/image/jiankuohao.png" class="cd-mar-right us-page-kuohao us-page-kuohao-change" @click="up()">
+					   <span v-for="it in indexs" v-bind:key="it" class="cd-mar-right" :class="{pageNumber:it==maxSize/10}">{{it}}</span>
+					   <img src="../assets/image/jiankuohao.png" class="cd-mar-right us-page-kuohao" @click="next()">
+				   </div>
 				</div>
-
+				</div>
 				<el-dialog title="新增角色" :visible.sync="dialogFormVisible">
 					<div class="us-add ">
 						<p class="cd-df-au cd-mar-top">
@@ -132,14 +140,12 @@
 					</div>
 				</el-dialog>
 			</div>
-		</div>
+		 
+		
+		
 		<div class="cd-df" >
-			<div>
-			<p class="us-pic-title">各学院注册人数</p>
-			<div id="main" style="width: 600px;height:400px;margin-left: 90px;"></div></div>
-			<div>
-			<p class="us-pic-title1">每月份注册人数</p>
-			<div id="child" style="width: 600px;height:430px;"></div></div>
+			<div id="main" style="width: 600px;height:400px;margin-left: 90px;margin-top: 60px;"></div>
+			<div id="child" style="width: 600px;height:430px;margin-top: 60px;"></div>
 		</div>
 
 
@@ -161,13 +167,13 @@
 				gender: '',
 				role: false,
 				active: true,
-				checked: [],
+				checkUserList: [],
 				userJudge: '',
 				dialogFormVisible: false,
 				formLabelWidth: '70px',
 				roleMeun: [],
 				currentPage: 1,
-				pageSize: 6,
+				pageSize: 10,
 				userId: '',
 				registerDate:[],
 				registerData:[],
@@ -199,7 +205,7 @@
 				users: [],
 				excel: [],
 				excels: [],
-				value: '',
+				user_status_choice: '',
 				userRole: '',
 				getApi: {},
 				defaultProps: {
@@ -220,7 +226,16 @@
 				statusCode: '',
 				year: '2020',
 				schoolApi: [],
-				registerApi: []
+				registerApi: [],
+				enableUserApi: [],
+				disableUserApi: [],
+				selectUserApi: [],
+				mobileList: '',
+				indexs: [1,2,3,4,5],
+				nextPage: '',
+				user_search: '',
+				minSize:0,
+				maxSize:10
 			}
 		},
 		created() {
@@ -228,6 +243,9 @@
 		},
 
 		methods: {
+			downList(){
+				window.location.href="/api/p/export/user";
+			},
 			//增加用户
 			addUser() {
 				this.dialogFormVisible = true;
@@ -237,6 +255,44 @@
 				this.role = !this.role;
 			},
 
+            search_user(){
+				this.axios({
+					method: 'post',
+					url: this.GLOBAL.baseUrl + '/p/user/blur',
+					data: {
+						"pageSize": this.pageSize,
+						"currentPage": this.currentPage,
+						"year": this.user_search
+					}
+				}).then(res =>{
+					this.users = res.data.data
+					this.user_search = ''
+				})
+			},
+
+            get_user_status(){
+				if(this.user_status_choice == "选项2"){
+					this.users = this.disableUserApi
+				} else if(this.user_status_choice == "选项3"){
+					this.users = this.enableUserApi
+				} else {
+					this.users = this.selectUserApi
+				}
+			},
+
+            export_user(){
+				this.axios({
+					method: 'get',
+					url: this.GLOBAL.baseUrl + '/download/users',
+				}).then(res =>{
+					this.$message({
+						message: '导出成功',
+						type: 'success',
+						duration: '1000'
+					});
+				})
+			},
+			
 			get_user() {
 				this.axios({
 						method: 'post',
@@ -249,16 +305,20 @@
 					})
 					.then(res => {
 						this.getApi = res.data.data
-						this.users = this.getApi.selectUserApi
+						this.selectUserApi = this.getApi.selectUserApi
 						this.schoolApi = this.getApi.schoolApi
 						this.registerApi = this.getApi.registerApi
-						for(var i = 0; i < this.schoolApi.length; i++){
+						this.enableUserApi = this.getApi.enableUserApi
+						this.disableUserApi = this.getApi.disableUserApi
+						this.users = this.selectUserApi
+						console.log(this.enableUserApi)
+						for(var i = 0, len = this.schoolApi.length; i < len; i++){
 							this.schoolDate.splice(i,1,this.schoolApi[i].schoolName)
-							this.schoolData.splice(i,1,this.schoolApi[i].peoperNumber)
+							this.schoolData.splice(i,1,this.schoolApi[i].peopleNumber)
 						}
 						for(var i = 0; i < this.registerApi.length; i++){
 							this.registerDate.splice(i,1,this.registerApi[i].month)
-							this.registerData.splice(i,1,this.registerApi[i].month)
+							this.registerData.splice(i,1,this.registerApi[i].count)
 						}
 						 this.drawChart();
 						 this.drawCharts()
@@ -279,10 +339,9 @@
 							method: 'delete',
 							url: this.GLOBAL.baseUrl + '/d/user/',
 							data: {
-								"mobileList": mobile
+								"fieldList": mobile
 							},
-						})
-						.then(res => {
+						}).then(res => {
 							this.$message({
 								message: '删除成功',
 								type: 'success',
@@ -290,7 +349,6 @@
 							});
 							this.get_user();
 						})
-
 				}).catch(() => {
 					this.$message({
 						type: 'info',
@@ -306,13 +364,15 @@
 					type: 'warning'
 				}).then(() => {
 					// 删除角色
-					var len = this.checked.length;
-					for (var i = 0; i < len; i++) {
+					let len = this.checkUserList.length
+					for(var i = 0; i < len; i++){
+						this.mobileList =this.mobileList + this.checkUserList[i] + ","
+					}
 						this.axios({
 								method: 'delete',
 								url: this.GLOBAL.baseUrl + '/d/user/',
 								data: {
-									"mobileList": mobile
+									"fieldList": this.mobileList
 								},
 							})
 							.then(res => {
@@ -321,9 +381,10 @@
 									type: 'success',
 									duration: '1000'
 								});
+								this.get_user()
+								this.mobileList = ''
 							})
-					}
-					this.get_user()
+					
 				}).catch(() => {
 					this.$message({
 						type: 'info',
@@ -332,8 +393,16 @@
 				});
 			},
 
-			get_users(item) {
+			up(){
+				this.minSize = this.minSize - 10;
+				this.maxSize = this.maxSize - 10
 			},
+			
+			next(){
+				this.minSize = this.minSize + 10
+				this.maxSize = this.maxSize + 10
+			},
+			
 			//修改用户
 			updateUser(item) {
 				this.userId = item.id;
@@ -422,6 +491,30 @@
 					});
 				}
 			},
+			
+			update_user_password(){
+				let len = this.checkUserList.length
+				for(var i = 0; i < len; i++){
+					this.mobileList =this.mobileList + this.checkUserList[i] + ","
+					
+				}
+				console.log(this.mobileList)
+				this.axios({
+					method: 'put',
+					   url: this.GLOBAL.baseUrl + '/u/password',
+					  data: {
+						   "fieldList": this.mobileList
+					   }
+				}).then(res =>{
+						this.$message({
+							message: '修改成功',
+							type: 'success',
+							duration: '1000'
+						});
+						this.get_user()
+						this.checkUserList = ""
+				})
+			},
 
 			inputFile: function() {
 				var _this = this;
@@ -448,6 +541,9 @@
 			      // 指定图表的配置项和数据
 			      let option = {
 			    color: ['#3398DB'],
+				title: {
+					text:'各学院注册人数',
+				},
 			    tooltip: {
 			        trigger: 'axis',
 			        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
@@ -463,7 +559,7 @@
 			    xAxis: [
 			        {
 			            type: 'category',
-			            data: this.schoolData,
+			            data: this.schoolDate,
 			            axisTick: {
 			                alignWithLabel: true
 			            }
@@ -471,8 +567,8 @@
 			    ],
 			    yAxis: [
 			        {
-			            type: 'value',
-						data: [2,4,6,8]
+						type: 'value',
+						splitNumber: 5
 			        }
 			    ],
 			    series: [
@@ -481,10 +577,12 @@
 			            type: 'bar',
 			            barWidth: '60%',
 			            data: this.schoolData,
-						 label: {
-						                    show: true, //开启显示
-						                    position: 'top', //在上方显示
-											}
+						 label: {   // 图形上的文本标签
+						        show: true,
+						        position: 'top', // 相对位置
+						        color: 'red',
+						      },
+
 			        }
 			    ]
 			};
@@ -497,16 +595,35 @@
 					  let myChart1 = this.$echarts.init(document.getElementById("child"));
 					  // 指定图表的配置项和数据
 					  let option = {
+						  color:['#3398D8'],
+						  title:{
+							  text:'各月份用户注册量'
+						  },
 				    xAxis: {
 				        type: 'category',
-				        data: this.registerData
+				        data: this.registerDate
 				    },
 				    yAxis: {
-				        type: 'value',
+						type: 'value',
+						splitNumber: 4
+						
 				    },
 				    series: [{
 				        data: this.registerData,
-				        type: 'line'
+				        type: 'line',
+						 itemStyle: {
+						            normal: {
+						                color: 'aqua',
+						                label: {
+						                    show: true, //开启显示
+						                    position: 'top', //在上方显示
+						                    textStyle: { //数值样式
+						                        color: 'aqua',
+						                        fontSize: 15
+						                    }
+						                }
+						            }
+						        }
 				    }],
 					}
 					myChart1.setOption(option);
@@ -520,20 +637,7 @@
 </script>
 
 <style>
-	.us-pic-title{
-		margin-top: 50px;
-		margin-left: 340px;
-		font-size: 16px;
-		font-weight: 600;
-		color: rgb(0, 138, 205);
-	}
-	.us-pic-title1{
-		margin-top: 50px;
-		margin-left: 250px;
-		font-size: 16px;
-		font-weight: 600;
-		color: rgb(0, 138, 205);
-	}
+	
 	.us-container {
 		width: 100%;
 		height: 80px;
@@ -595,6 +699,11 @@
 		margin-left: 30px;
 	}
 
+    .us-function-icon {
+		width: 20px;
+		height: 20px;
+	}
+
 	.us-input-sm {
 		width: 10%;
 	}
@@ -606,6 +715,7 @@
 		border-radius: 5px;
 		outline: none;
 		margin-left: 5px;
+		padding-left: 15px;
 	}
 
 	.us-add span {
@@ -657,16 +767,29 @@
 		width: 180px;
 	}
 
-	.us-mar-right {
-		margin-right: 10px;
+	.us-mar-left {
+		margin-left: 50px;
 	}
 
 	.us-btn {
-		width: 30px;
-		height: 30px;
-		margin-right: 5px;
+		width: 40px;
+		height: 40px;
+		margin-left: 5px;
 		font-size: 18px;
 		color: #FFFFFF;
 		border: none;
+	}
+	
+	.us-page-kuohao {
+		width: 16px;
+		height: 16px;
+	}
+	
+	.us-page-kuohao-change {
+		transform: rotate(180deg);
+	}
+	
+	.pageNumber {
+		color: #1890ff;
 	}
 </style>

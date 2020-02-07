@@ -132,7 +132,7 @@
 					        this.$router.push('permission')
 							break
 					case "班课管理" :
-					        this.$router.push('')
+					        this.$router.push('class')
 							break
 					case "资源管理" :
 					        this.$router.push('resource')

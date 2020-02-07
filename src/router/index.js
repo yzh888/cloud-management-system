@@ -5,6 +5,9 @@ import Permission from '../views/Permission.vue'
 import Role from '../views/Role.vue'
 import Index from '../views/Index.vue'
 import User from '../views/User.vue'
+import Class from '../views/Class.vue'
+import Resource from '../views/Resource.vue'
+import Activity from '../views/Activity.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -38,6 +41,22 @@ const routes = [
 				name: 'user',
 				component: User,
 			},
+			{
+				path: 'class',
+				name: 'class',
+				component: Class
+			},
+			{
+				path: 'resource',
+				name: 'resource',
+				component: Resource
+			},
+			{
+				path: 'activity',
+				name: 'activity',
+				component: Activity
+			}
+			
 		]
 	},
 ]

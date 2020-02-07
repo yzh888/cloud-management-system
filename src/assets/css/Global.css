@@ -27,6 +27,10 @@ a {
 	color: red;
 }
 
+.cd-width {
+	width: 100%;
+}
+
 /* 响应式布局 */
 .cd-col-1 {
 	flex: 0 0 8.3%;
@@ -188,6 +192,9 @@ a {
 .cd-mar-top {
 	margin-top: 10px;
 }
+.cd-mar-bottom {
+	margin-bottom: 20px;
+}
 
 .cd-mar-sm-top {
 	margin-top: 5px;
@@ -245,4 +252,8 @@ a {
 
 .cd-boder-circle {
 	border-radius: 50%;
+}
+
+.cd-direction {
+	transform: rotate(180deg);
 }
